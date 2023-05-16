@@ -5,24 +5,43 @@
 <title>Safe MOVE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Chessboard480.svg/312px-Chessboard480.svg.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&display=swap" rel="stylesheet">
 <style>
 body, html {
-  margin: 0;
-  height: 100%;
-  font-size: 6.25vmin;
+    margin: 0;
+    height: 100%;
+    font-size: 12.5vmin;
+    font-family: 'Noto Sans Symbols 2', sans-serif;
+    overflow: hidden;
 }
 #board {
-  display: flex;
-  align-items: center;
-  height: 100vh;
+    display: flex;
+    align-items: center;
+    height: 100vh;
 }
 #board table {
-  border-collapse: collapse;
-  margin: auto
+    border-collapse: collapse;
+    margin: auto
 }
 #board td {
-  width: 12.5vmin;
-  height: 12.5vmin;
+    padding: 0;
+    margin: 0;
+    width: 12.5vmin;
+    line-height: 12.5vmin;
+    height: 12.5vmin;
+    text-align: center;
+}
+#board td span {
+    position: relative;
+    top: 2vmin;
+}
+#board tr td {
+    background-color: #eee;
+}
+#board tr:nth-child(even) td:nth-child(odd), #board tr:nth-child(odd) td:nth-child(even) {
+    background-color: #ccc;
 }
 </style>
 </head>
@@ -85,7 +104,7 @@ class Position {
                     ${Array(8).fill(0).map((_, y) => `
                         <tr>
                             ${Array(8).fill(0).map((_, x) => `
-                                <td>${this.squareToContent(x, y)}</td>
+                                <td><span>${this.squareToContent(x, y)}</span></td>
                             `).join('')}
                         </tr>
                     `).join('')}
