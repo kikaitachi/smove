@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Safe MOVE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Chessboard480.svg/312px-Chessboard480.svg.png">
+<style>
+body, html {
+  margin: 0;
+  height: 100%;
+  font-size: 6.25vmin;
+}
+#board {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+}
+#board table {
+  border-collapse: collapse;
+  margin: auto
+}
+#board td {
+  width: 12.5vmin;
+  height: 12.5vmin;
+}
+</style>
+</head>
+<body>
+<div id="board"></div>
+<script>
+const stockfish = new Worker('stockfish.wasm.js');
+
+const KING = 9812;
+const QUEEN = 9813;
+const ROOK = 9814;
+const BISHOP = 9815;
+const KNIGHT = 9816;
+const PAWN = 9817;
+
+class Position {
+    figures;
+    colors;  // true - white, false - black
+    moved;
+    passsingPawn;
+    whiteTurn;
+
+    constructor(position) {
+        if (position) {
+            this.figures = position.figures;
+            this.colors = position.colors;
+            this.moved = position.moved;
+            this.passsingPawn = position.passsingPawn;
+            this.whiteTurn = position.whiteTurn;
+        } else {
+            const pieces = [ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK];
+            this.figures = pieces.concat(
+                Array(8).fill(PAWN),
+                Array(32).fill(0),
+                Array(8).fill(PAWN),
+                pieces
+            );
+            this.colors = Array.from({length: 64}, (v, i) => i >= 64 - 16);
+            this.moved = Array(64).fill(false);
+            this.passsingPawn = 0;
+            this.whiteTurn = true;
+        }
+    }
+
+    squareToContent(x, y) {
+        const index = y * 8 + x;
+        const figure = this.figures[index];
+        if (figure === 0) {
+            return '';
+        } else {
+            const codePoint = this.colors[index] ? figure : figure + 6;
+            return `&#${codePoint};`
+        }
+    }
+
+    draw() {
+        document.getElementById('board').innerHTML = `
+            <table>
+                <tbody>
+                    ${Array(8).fill(0).map((_, y) => `
+                        <tr>
+                            ${Array(8).fill(0).map((_, x) => `
+                                <td>${this.squareToContent(x, y)}</td>
+                            `).join('')}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+}
+
+const possibleMoves = () => {
+    const moves = [];
+    return moves;
+}
+
+new Position().draw();
+
+stockfish.addEventListener('message', function (e) {
+  console.log(e.data);
+});
+stockfish.postMessage('go depth 15 movetime 1000 searchmoves e2e4');
+</script>
+</body>
+</html>
